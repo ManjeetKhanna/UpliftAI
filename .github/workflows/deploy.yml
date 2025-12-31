@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm install
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm install
