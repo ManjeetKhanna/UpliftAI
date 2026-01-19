@@ -12,10 +12,10 @@ jobs:
 
       - name: Install backend deps
         run: |
-          cd backend
+          cd Backend
           npm install
 
       - name: Install frontend deps
         run: |
-          cd frontend
+          cd Frontend
           npm install
