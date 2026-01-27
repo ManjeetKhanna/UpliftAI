@@ -31,8 +31,8 @@ async function start() {
       console.log("✅ Reminder cron started");
     }
 
-    // ✅ Start server
-    app.listen(PORT, () => {
+    // ✅ Start server (bind publicly for Lightsail)
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`Backend running on port ${PORT}`);
     });
   } catch (err) {
