@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api.js";
 
 export default function Register() {
   const nav = useNavigate();
@@ -7,24 +8,25 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
+    setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/register", {
+      await apiFetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, role }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Register failed");
-
       nav("/login");
     } catch (e2) {
-      setErr(e2.message);
+      setErr(e2?.message || "Register failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,11 +47,7 @@ export default function Register() {
             <div style={{ fontSize: 12, opacity: 0.8, marginBottom: 6, fontWeight: 700 }}>
               Role
             </div>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={inputStyle}
-            >
+            <select value={role} onChange={(e) => setRole(e.target.value)} style={inputStyle}>
               <option value="student">Student</option>
               <option value="staff">Staff</option>
             </select>
@@ -84,8 +82,8 @@ export default function Register() {
 
           {err && <div style={errorBox}>{err}</div>}
 
-          <button type="submit" style={primaryBtn}>
-            Register
+          <button type="submit" style={primaryBtn} disabled={loading}>
+            {loading ? "Creating…" : "Register"}
           </button>
 
           <div style={{ marginTop: 12, opacity: 0.85, fontSize: 13 }}>

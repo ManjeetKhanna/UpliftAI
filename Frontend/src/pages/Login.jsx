@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../state/auth.jsx";
 import { useNavigate, Link } from "react-router-dom";
+import { apiFetch } from "../utils/api.js";
 
 export default function Login() {
   const { login } = useAuth();
@@ -9,29 +10,30 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
+    setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const data = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
-      if (!data.token) throw new Error("No token returned from server");
+      if (!data?.token) throw new Error("No token returned from server");
 
-      // ✅ keep your current working logic
       login(data.token);
 
-      const role = data.role; // backend returns it in your setup
-      nav(role === "staff" ? "/staff" : "/student");
+      // backend returns role; token also contains role, but we'll use response
+      nav(data.role === "staff" ? "/staff" : "/student");
     } catch (e2) {
-      setErr(e2.message);
+      setErr(e2?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,8 +73,8 @@ export default function Login() {
 
           {err && <div style={errorBox}>{err}</div>}
 
-          <button type="submit" style={primaryBtn}>
-            Login
+          <button type="submit" style={primaryBtn} disabled={loading}>
+            {loading ? "Logging in…" : "Login"}
           </button>
 
           <div style={{ marginTop: 12, opacity: 0.85, fontSize: 13 }}>
@@ -98,7 +100,6 @@ function AuthBackground({ children }) {
         backgroundColor: "#0b1220",
       }}
     >
-      {/* Overlay for readability */}
       <div
         style={{
           minHeight: "100vh",
@@ -161,6 +162,7 @@ const primaryBtn = {
   cursor: "pointer",
   fontWeight: 900,
   boxSizing: "border-box",
+  opacity: 1,
 };
 
 const errorBox = {
