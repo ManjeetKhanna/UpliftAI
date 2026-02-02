@@ -1,71 +1,132 @@
-import React, { useState } from "react";
-import t from "../utils/i18n.js";
+import React, { useEffect, useMemo, useState } from "react";
+import { t } from "../utils/i18n.js";
 
-const defaultTips = [
-  "Take 5 deep breaths",
-  "Step outside for 10 minutes",
-  "Stretch for 5 minutes",
-  "Write down one positive thing"
-];
+const STORAGE_KEY = "upliftai_wellness_tips_v1";
 
-function Wellness({ lang }) {
-  const [coping, setCoping] = useState([...defaultTips]);
-  const [newTip, setNewTip] = useState("");
+export default function Wellness({ lang = "en" }) {
+  const defaults = useMemo(
+    () => [
+      "Take 5 deep breaths",
+      "Step outside for 10 minutes",
+      "Stretch for 5 minutes",
+      "Write down one positive thing",
+      "Drink water",
+    ],
+    []
+  );
+
+  const [tips, setTips] = useState(defaults);
+  const [custom, setCustom] = useState("");
+
+  // Load once on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return;
+
+      // Keep saved tips, but ensure defaults exist at least once
+      const merged = [...parsed];
+      for (const d of defaults) {
+        if (!merged.includes(d)) merged.push(d);
+      }
+      setTips(merged);
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist whenever tips changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tips));
+    } catch {
+      // ignore (private mode, etc.)
+    }
+  }, [tips]);
 
   const addTip = () => {
-    if (newTip.trim() === "") return;
-    setCoping([...coping, newTip.trim()]);
-    setNewTip("");
+    const v = custom.trim();
+    if (!v) return;
+    setTips((prev) => [v, ...prev]);
+    setCustom("");
   };
 
-  const translateTip = (tip) => {
-    if (lang === "en") return tip;
-    const map = {
-      "Take 5 deep breaths": "Respira profundo 5 veces",
-      "Step outside for 10 minutes": "Sal afuera por 10 minutos",
-      "Stretch for 5 minutes": "Estírate por 5 minutos",
-      "Write down one positive thing": "Escribe algo positivo"
-    };
-    return map[tip] || tip;
+  const removeTip = (idx) => {
+    setTips((prev) => prev.filter((_, i) => i !== idx));
   };
 
   return (
-    <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "30px", borderRadius: "5px" }}>
-      <h2>{t("wellness", lang)}</h2>
+    <div style={{ padding: 5 }}>
+      <h2 style={styles.h2}>{t("wellness", lang)}</h2>
+      <p style={styles.sub}>{t("wellnessHint", lang)}</p>
 
-      <ul>
-        {coping.map((tip, i) => <li key={i}>{translateTip(tip)}</li>)}
+      <ul style={styles.list}>
+        {tips.map((tip, idx) => (
+          <li key={`${tip}-${idx}`} style={styles.item}>
+            <span>{tip}</span>
+            <button onClick={() => removeTip(idx)} style={styles.x} type="button" aria-label="Remove tip">
+              ✕
+            </button>
+          </li>
+        ))}
       </ul>
 
-      <input
-        type="text"
-        placeholder={lang === "en" ? "Add your own tip" : "Agrega tu propio consejo"}
-        value={newTip}
-        onChange={(e) => setNewTip(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "8px",
-          borderRadius: "5px",
-          border: "1px solid #ccc",
-          marginBottom: "10px"
-        }}
-      />
-      <button
-        onClick={addTip}
-        style={{
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#0088FE",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer"
-        }}
-      >
-        {t("addTip", lang)}
-      </button>
+      <div style={styles.row}>
+        <input
+          value={custom}
+          onChange={(e) => setCustom(e.target.value)}
+          placeholder={t("addYourTip", lang)}
+          style={styles.input}
+        />
+        <button onClick={addTip} style={styles.btn} type="button">
+          {t("add", lang)}
+        </button>
+      </div>
     </div>
   );
 }
 
-export default Wellness;
+const styles = {
+  h2: { fontSize: 18, fontWeight: 900, marginBottom: 6 },
+  sub: { marginTop: 0, marginBottom: 10, opacity: 0.85, fontSize: 13, lineHeight: 1.4 },
+  list: { margin: 0, paddingLeft: 16 },
+  item: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 10,
+    marginBottom: 8,
+    alignItems: "center",
+  },
+  x: {
+    borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.12)",
+    background: "rgba(255,255,255,0.06)",
+    color: "white",
+    cursor: "pointer",
+    padding: "6px 10px",
+    opacity: 0.85,
+  },
+  row: { display: "flex", gap: 10, marginTop: 10 },
+  input: {
+    flex: 1,
+    padding: "12px 12px",
+    borderRadius: 12,
+    border: "1px solid rgba(255,255,255,0.12)",
+    background: "rgba(255,255,255,0.06)",
+    color: "white",
+    outline: "none",
+  },
+  btn: {
+    padding: "12px 14px",
+    borderRadius: 12,
+    border: "1px solid rgba(255,255,255,0.12)",
+    background: "rgba(110,168,255,0.25)",
+    color: "white",
+    cursor: "pointer",
+    fontWeight: 900,
+  },
+};

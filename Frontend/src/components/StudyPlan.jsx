@@ -4,7 +4,7 @@ import { useAuth } from "../state/auth.jsx";
 export default function StudyPlan({ lang }) {
   const { token } = useAuth();
 
-  const [courseInput, setCourseInput] = useState("CS 5781, DB, ML");
+  const [courseInput, setCourseInput] = useState("CS 5760, CS 5991");
   const [workHoursPerWeek, setWorkHoursPerWeek] = useState(20);
   const [commuteMinutesPerDay, setCommuteMinutesPerDay] = useState(60);
   const [daysPerWeek, setDaysPerWeek] = useState(7);

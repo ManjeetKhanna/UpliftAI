@@ -4,6 +4,7 @@ import ScheduleForm from "../components/ScheduleForm.jsx";
 import Wellness from "../components/Wellness.jsx";
 import ReminderSignup from "../components/ReminderSignup.jsx";
 import StudyPlan from "../components/StudyPlan.jsx";
+import { t } from "../utils/i18n.js";
 
 export default function StudentPage() {
   const [lang, setLang] = useState("en");
@@ -11,22 +12,28 @@ export default function StudentPage() {
 
   return (
     <div>
-      {/* Header row */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight">Student</h1>
-          <p className="text-sm text-slate-300">
-            Chat, schedules, wellness, study plans, reminders
+      {/* Header row: keeps title centered, button on right */}
+      <div className="mb-6 grid items-center gap-3 sm:grid-cols-[1fr_auto_1fr]">
+        <div className="hidden sm:block" />
+
+        <div className="text-center">
+          <h1 className="text-3xl font-extrabold tracking-tight">
+            {t("studentTitle", lang)}
+          </h1>
+          <p className="mt-1 text-sm text-slate-300">
+            {t("studentSubtitle", lang)}
           </p>
         </div>
 
-        <button
-          onClick={() => setLang((v) => (v === "en" ? "es" : "en"))}
-          className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition"
-          type="button"
-        >
-          {lang === "en" ? "Switch to Spanish" : "Cambiar a Inglés"}
-        </button>
+        <div className="flex justify-center sm:justify-end">
+          <button
+            onClick={() => setLang((v) => (v === "en" ? "es" : "en"))}
+            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition"
+            type="button"
+          >
+            {lang === "en" ? t("switchToSpanish", lang) : t("switchToEnglish", lang)}
+          </button>
+        </div>
       </div>
 
       {/* Grid */}
@@ -43,7 +50,6 @@ export default function StudentPage() {
           <Wellness lang={lang} />
         </Card>
 
-        {/* Full-width blocks */}
         <Card className="lg:col-span-3">
           <StudyPlan lang={lang} />
         </Card>
