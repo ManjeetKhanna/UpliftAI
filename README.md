@@ -217,11 +217,24 @@ How issues were resolved:
 ## Screenshots
 
 - Login and Registration
+  <img width="1918" height="1025" alt="image" src="https://github.com/user-attachments/assets/ff0cb991-3d28-4636-8904-a6557edabc24" />
+
 - Student Dashboard
-- Academic Schedule Generator
-- Wellness Toolbox
-- AI Micro-Advisor Chat
+  <img width="1901" height="950" alt="image" src="https://github.com/user-attachments/assets/28539f5f-427e-4d9b-a9c3-ecde4f5e285d" />
+
+
+- Study Plan (AI)
+  <img width="1902" height="1026" alt="image" src="https://github.com/user-attachments/assets/7be1cd09-7158-47f9-a07a-2d53d41872bb" />
+
+- Daily Reminders
+  <img width="1902" height="380" alt="image" src="https://github.com/user-attachments/assets/4da365dd-9035-417f-9c73-7eff2dd7fe69" />
+  <img width="1538" height="500" alt="image" src="https://github.com/user-attachments/assets/e7392f96-aa05-4a4f-b7f4-cde550bec330" />
+
 - Staff Dashboard (Analytics)
+  <img width="1898" height="1027" alt="image" src="https://github.com/user-attachments/assets/62d2afb8-c1e4-428a-9e95-694fc5c91a6f" />
+  <img width="1891" height="1025" alt="image" src="https://github.com/user-attachments/assets/a9af1de3-f04e-4f8e-b199-9ad3f929565d" />
+
+
 
 ---
 
